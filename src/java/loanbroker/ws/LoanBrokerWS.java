@@ -34,18 +34,6 @@ public class LoanBrokerWS {
                 "<loanAmount>" + request.loanAmount + "</loanAmount>\n" +
                 "<loanDuration>" + request.loanDuration + "</loanDuration>\n" + 
                 "</LoanRequest>\n";
-                
-/*        LoanResponse response = new LoanResponse();
-        response.bankName = "TestBank";
-        response.interrestRate = 20.0;
-        if(request.ssn == 1){
-            try {
-                Thread.sleep(2000000000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(LoanBrokerWS.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        response.ssn = 2903488;*/
         return message.getLoanRequest(msg);
     }
 }
