@@ -72,14 +72,6 @@ public class Messaging {
         outChannel.basicPublish("", OUT_QUEUE, null, message.getBytes());
     }
     
-  /*  private LoanResponse consumeMessage() throws InterruptedException, IOException{
-        Delivery delivery = consumer.nextDelivery();
-        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-        con.close();
-        LoanResponse response = new LoanResponse();
-        response.bankName = new String(delivery.getBody());
-        return response;
-    }*/
     
     private LoanResponse consumeMessage() throws InterruptedException, IOException {
         Delivery delivery = consumer.nextDelivery();
