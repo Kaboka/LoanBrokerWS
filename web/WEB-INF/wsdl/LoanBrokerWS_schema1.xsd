@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://ws.loanbroker/" xmlns:tns="http://ws.loanbroker/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="getLoanRequest" nillable="true" type="tns:getLoanRequest"/>
+
+    <xs:element name="getLoanRequestResponse" nillable="true" type="tns:getLoanRequestResponse"/>
+    
+    <xs:element name="ssn" type="ssnNumber"/>
+
+    <xs:simpleType name="ssnNumber">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[\d]{6}-[\d]{4}" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="getLoanRequest">
+        <xs:sequence>
+            <xs:element name="request" type="tns:loanRequest" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="loanRequest">
+        <xs:sequence>
+            <xs:element name="ssn" type="ssnNumber" minOccurs="1"/>
+            <xs:element name="loanAmount" type="xs:double"/>
+            <xs:element name="loanDuration" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="getLoanRequestResponse">
+        <xs:sequence>
+            <xs:element name="return" type="tns:loanResponse" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="loanResponse">
+        <xs:sequence>
+            <xs:element name="bankName" type="xs:string" minOccurs="0"/>
+            <xs:element name="ssn" type="xs:string" minOccurs="0"/>
+            <xs:element name="interrestRate" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+   
+</xs:schema>

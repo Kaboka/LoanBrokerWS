@@ -75,6 +75,7 @@ public class Messaging {
     
     private LoanResponse consumeMessage() throws InterruptedException, IOException {
         Delivery delivery = consumer.nextDelivery();
+        System.err.println("DELIVERY GETBODY: " + new String(delivery.getBody()));
         inChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         con.close();
         LoanResponse response = new LoanResponse();
@@ -82,11 +83,11 @@ public class Messaging {
         XPath xPath = XPathFactory.newInstance().newXPath();
         String ssn = "";
         String bankName = "";
-        float interestRate = 0.0f;
+        double interestRate = 0.0;
         try {
-            bankName = xPath.compile("/LoanRequest/bankName").evaluate(doc);
-            ssn = xPath.compile("/LoanRequest/ssn").evaluate(doc);
-            interestRate = Float.parseFloat(xPath.compile("/LoanRequest/interestRate").evaluate(doc));
+            bankName = xPath.compile("/LoanResponse/bankName").evaluate(doc);
+            ssn = xPath.compile("/LoanResponse/ssn").evaluate(doc);
+            interestRate = Double.parseDouble(xPath.compile("/LoanResponse/intrestRate").evaluate(doc));
             response.interrestRate = interestRate;
             response.bankName = bankName;
             response.ssn = ssn;

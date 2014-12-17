@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package loanbroker.ws;
 
 import java.util.logging.Level;
@@ -21,11 +15,8 @@ import loanbroker.messaging.Messaging;
  * @author Kaboka
  */
 @Stateless
-@WebService(serviceName = "LoanBrokerWS")
+@WebService(serviceName = "LoanBrokerWS", wsdlLocation = "WEB-INF/wsdl/LoanBrokerWS.wsdl")
 public class LoanBrokerWS {
-
-
-
     @WebMethod(operationName = "getLoanRequest")
     public LoanResponse getLoanRequest(@WebParam(name = "request") LoanRequest request) {
         Messaging message = new Messaging();
