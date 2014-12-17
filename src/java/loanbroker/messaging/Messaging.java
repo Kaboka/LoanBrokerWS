@@ -14,7 +14,12 @@ import com.rabbitmq.client.QueueingConsumer.Delivery;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import loanbroker.dto.LoanResponse;
+import org.w3c.dom.Document;
+import utilities.xml.xmlMapper;
 
 /**
  *
@@ -22,9 +27,10 @@ import loanbroker.dto.LoanResponse;
  */
 public class Messaging {
     
-    private static final String IN_QUEUE = "webservice"; //dummy name
-    private static final String OUT_QUEUE = "enricher_creditScore";;
-    private Channel channel;
+    private static final String IN_QUEUE = "webservice_gr1"; 
+    private static final String OUT_QUEUE = "enricher_creditScore_gr1";;
+    private static Channel inChannel;
+    private static Channel outChannel;
     private Connection con;
     private QueueingConsumer consumer;        
    
@@ -37,11 +43,12 @@ public class Messaging {
         Connection connection;
         try {
             con = factory.newConnection();
-            channel = con.createChannel();
-            channel.queueDeclare(IN_QUEUE, false, false, false, null);
-            channel.queueDeclare(OUT_QUEUE, false, false, false, null);
-            consumer = new QueueingConsumer(channel);
-            channel.basicConsume(IN_QUEUE,false, consumer);
+            inChannel = con.createChannel();
+            inChannel.queueDeclare(IN_QUEUE, false, false, false, null);
+            outChannel= con.createChannel();
+            outChannel.queueDeclare(OUT_QUEUE, false, false, false, null);
+            consumer = new QueueingConsumer(inChannel);
+            inChannel.basicConsume(IN_QUEUE,false, consumer);
         } catch (IOException ex) {
             Logger.getLogger(Messaging.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -62,15 +69,38 @@ public class Messaging {
     }
     
     private void publishMessage(String message) throws IOException{
-        channel.basicPublish("", OUT_QUEUE, null, message.getBytes());
+        outChannel.basicPublish("", OUT_QUEUE, null, message.getBytes());
     }
     
-    private LoanResponse consumeMessage() throws InterruptedException, IOException{
+  /*  private LoanResponse consumeMessage() throws InterruptedException, IOException{
         Delivery delivery = consumer.nextDelivery();
         channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         con.close();
         LoanResponse response = new LoanResponse();
         response.bankName = new String(delivery.getBody());
+        return response;
+    }*/
+    
+    private LoanResponse consumeMessage() throws InterruptedException, IOException {
+        Delivery delivery = consumer.nextDelivery();
+        inChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+        con.close();
+        LoanResponse response = new LoanResponse();
+        Document doc = xmlMapper.getXMLDocument(new String(delivery.getBody()));
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        String ssn = "";
+        String bankName = "";
+        float interestRate = 0.0f;
+        try {
+            bankName = xPath.compile("/LoanRequest/bankName").evaluate(doc);
+            ssn = xPath.compile("/LoanRequest/ssn").evaluate(doc);
+            interestRate = Float.parseFloat(xPath.compile("/LoanRequest/interestRate").evaluate(doc));
+            response.interrestRate = interestRate;
+            response.bankName = bankName;
+            response.ssn = ssn;
+        } catch (XPathExpressionException ex) {
+            Logger.getLogger(Messaging.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return response;
     }
 }

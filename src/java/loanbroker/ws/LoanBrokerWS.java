@@ -34,6 +34,7 @@ public class LoanBrokerWS {
                 "<loanAmount>" + request.loanAmount + "</loanAmount>\n" +
                 "<loanDuration>" + request.loanDuration + "</loanDuration>\n" + 
                 "</LoanRequest>\n";
+        System.out.println("SSN NUMBER" + request.ssn);
         return message.getLoanRequest(msg);
     }
 }
