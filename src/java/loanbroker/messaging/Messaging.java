@@ -76,7 +76,7 @@ public class Messaging {
     private LoanResponse consumeMessage() throws InterruptedException, IOException {
         Delivery delivery = consumer.nextDelivery();
         System.err.println("DELIVERY GETBODY: " + new String(delivery.getBody()));
-        inChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+        inChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), true);
         con.close();
         LoanResponse response = new LoanResponse();
         Document doc = xmlMapper.getXMLDocument(new String(delivery.getBody()));
@@ -87,7 +87,7 @@ public class Messaging {
         try {
             bankName = xPath.compile("/LoanResponse/bankName").evaluate(doc);
             ssn = xPath.compile("/LoanResponse/ssn").evaluate(doc);
-            interestRate = Double.parseDouble(xPath.compile("/LoanResponse/intrestRate").evaluate(doc));
+            interestRate = Double.parseDouble(xPath.compile("/LoanResponse/interestRate").evaluate(doc));
             response.interrestRate = interestRate;
             response.bankName = bankName;
             response.ssn = ssn;
