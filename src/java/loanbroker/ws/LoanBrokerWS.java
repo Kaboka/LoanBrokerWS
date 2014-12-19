@@ -25,7 +25,10 @@ public class LoanBrokerWS {
                 "<loanAmount>" + request.loanAmount + "</loanAmount>\n" +
                 "<loanDuration>" + request.loanDuration + "</loanDuration>\n" + 
                 "</LoanRequest>\n";
-        System.out.println("SSN NUMBER" + request.ssn);
+        System.out.println("LoanBrokerWS got new request");
+        System.out.println("SSN number " + request.ssn);
+        System.out.println("Loan amount " + request.loanAmount);
+        System.out.println("Loan Duration " + request.loanDuration);
         return message.getLoanRequest(msg);
     }
 }
